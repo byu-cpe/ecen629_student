@@ -1,6 +1,6 @@
-file(GLOB asst1_srcs "*.cpp"
+file(GLOB asst_routing_srcs "*.cpp"
 )
 
-add_executable(asst1 ${asst1_srcs})
-target_link_libraries(asst1 easygl)
-target_include_directories(asst1 PUBLIC ".")
+add_executable(asst_routing ${asst_routing_srcs})
+target_link_libraries(asst_routing easygl)
+target_include_directories(asst_routing PUBLIC ".")
