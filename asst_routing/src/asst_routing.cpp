@@ -84,8 +84,7 @@ int main(int argc, char **argv) {
   std::cout << "Starting Routing\n";
 
   // Initialize router
-  // Router router;
-  RouterPathfinder router;
+  Router router;
 
   Drawer::setFpga(fpga);
   Drawer::init();
