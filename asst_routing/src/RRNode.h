@@ -26,16 +26,16 @@ private:
   std::vector<RRNode *> connections;
   Net *net;
   rrType type;
-  int r;
-  int c;
+  int x;
+  int y;
   int idx;
 
 public:
   void connect(RRNode &node);
   bool isConnected(RRNode &node);
   rrType getType() { return type; }
-  int getR() { return r; }
-  int getC() { return c; }
+  int getX() { return x; }
+  int getY() { return y; }
   int getIdx() { return idx; }
 
   bool isUsed() { return net != nullptr; }
@@ -44,7 +44,7 @@ public:
   std::vector<RRNode *> &getConnections() { return connections; }
 
   friend std::ostream &operator<<(std::ostream &out, RRNode const &node) {
-    out << "RRNode (" << node.r << ", " << node.c << ")."
+    out << "RRNode (" << node.x << ", " << node.y << ")."
         << node.rrTypeStr[node.type] << "." << node.idx;
     return out;
   }

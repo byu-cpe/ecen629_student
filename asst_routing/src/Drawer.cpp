@@ -83,12 +83,12 @@ void Drawer::draw() {
 
   int N = fpga->getN();
   int W = fpga->getW();
-  for (int r = 0; r < N; r++) {
-    for (int c = 0; c < N; c++) {
-      int x = PAD + c * getTileWidth(W);
-      int y = PAD + r * getTileWidth(W);
+  for (int yIdx = 0; yIdx < N; yIdx++) {
+    for (int xIdx = 0; xIdx < N; xIdx++) {
+      int x = PAD + xIdx * getTileWidth(W);
+      int y = PAD + yIdx * getTileWidth(W);
 
-      FpgaTile &tile = fpga->getTile(r, c);
+      FpgaTile &tile = fpga->getTile(xIdx, yIdx);
 
       // Draw vertical wires
       if (tile.getDown()) {
@@ -112,9 +112,9 @@ void Drawer::draw() {
                 if (n->getType() == RRNode::CB_WIRE) {
                   partial = true;
                   idx = n->getIdx();
-                } else if (n->getR() <= rr.getR())
+                } else if (n->getY() <= rr.getY())
                   up = true;
-                else if (n->getR() > rr.getR())
+                else if (n->getY() > rr.getY())
                   down = true;
               }
             }
@@ -152,10 +152,10 @@ void Drawer::draw() {
               if (n->getNet() == rr.getNet()) {
                 if (n->getType() == RRNode::CB_WIRE) {
                   partial = true;
-                  idx = n->getIdx();
-                } else if (n->getC() <= rr.getC())
+                  idx = n->getIdx() - 2;
+                } else if (n->getX() <= rr.getX())
                   left = true;
-                else if (n->getC() > rr.getC())
+                else if (n->getX() > rr.getX())
                   right = true;
               }
             }

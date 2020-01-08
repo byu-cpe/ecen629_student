@@ -11,25 +11,25 @@
 FPGA::FPGA(int gridSize, int W) : N(gridSize), W(W) {
 
   // Create all tiles
-  for (int r = 0; r < N; r++) {
-    for (int c = 0; c < N; c++) {
-      FpgaTile *tile = new FpgaTile(r, c, W);
+  for (int x = 0; x < N; x++) {
+    for (int y = 0; y < N; y++) {
+      FpgaTile *tile = new FpgaTile(x, y, W);
       tiles.push_back(tile);
-      tileMap[r][c] = tile;
+      tileMap[x][y] = tile;
     }
   }
 
   for (auto tile : tiles) {
-    int r = tile->getR();
-    int c = tile->getC();
-    if (r != 0)
-      tileMap[r][c]->setUp(tileMap[r - 1][c]);
-    if (r != (N - 1))
-      tileMap[r][c]->setDown(tileMap[r + 1][c]);
-    if (c != 0)
-      tileMap[r][c]->setLeft(tileMap[r][c - 1]);
-    if (c != (N - 1))
-      tileMap[r][c]->setRight(tileMap[r][c + 1]);
+    int x = tile->getX();
+    int y = tile->getY();
+    if (x != 0)
+      tileMap[x][y]->setLeft(tileMap[x - 1][y]);
+    if (x != (N - 1))
+      tileMap[x][y]->setRight(tileMap[x + 1][y]);
+    if (y != 0)
+      tileMap[x][y]->setUp(tileMap[x][y - 1]);
+    if (y != (N - 1))
+      tileMap[x][y]->setDown(tileMap[x][y + 1]);
   }
 
   for (auto tile : tiles) {

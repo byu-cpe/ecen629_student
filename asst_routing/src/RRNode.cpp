@@ -13,8 +13,8 @@
 
 using namespace std;
 
-RRNode::RRNode(rrType type, int r, int c, int idx)
-    : net(nullptr), type(type), r(r), c(c), idx(idx) {
+RRNode::RRNode(rrType type, int x, int y, int idx)
+    : net(nullptr), type(type), x(x), y(y), idx(idx) {
   // TODO Auto-generated constructor stub
 }
 

@@ -21,8 +21,8 @@ public:
   virtual ~FpgaTile();
 
 private:
-  int r;
-  int c;
+  int x;
+  int y;
   int W;
 
   FpgaTile *left;
@@ -37,8 +37,8 @@ private:
   std::vector<RRNode *> rrNodes;
 
 public:
-  int getR() { return r; }
-  int getC() { return c; }
+  int getX() { return x; }
+  int getY() { return y; }
 
   std::vector<RRNode *> &getRRNodes() { return rrNodes; }
 

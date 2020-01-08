@@ -10,8 +10,8 @@
 #include "RRNode.h"
 #include "easygl/graphics.h"
 
-FpgaTile::FpgaTile(int r, int c, int W)
-    : r(r), c(c), W(W), left(nullptr), right(nullptr), up(nullptr),
+FpgaTile::FpgaTile(int x, int y, int W)
+    : x(x), y(y), W(W), left(nullptr), right(nullptr), up(nullptr),
       down(nullptr) {
   // TODO Auto-generated constructor stub
 }
@@ -24,23 +24,23 @@ void FpgaTile::generateContents() {
   // Add routing tracks
   if (down)
     for (int i = 0; i < W; i++) {
-      RRNode *node = new RRNode(RRNode::V_WIRE, r, c, i);
+      RRNode *node = new RRNode(RRNode::V_WIRE, x, y, i);
       rrNodes.push_back(node);
       vWires.push_back(node);
     }
   if (right)
     for (int i = 0; i < W; i++) {
-      RRNode *node = new RRNode(RRNode::H_WIRE, r, c, i);
+      RRNode *node = new RRNode(RRNode::H_WIRE, x, y, i);
       rrNodes.push_back(node);
       hWires.push_back(node);
     }
 
   if (down && right) {
     // Add logic pins
-    logicPin[1] = new RRNode(RRNode::CB_WIRE, r, c, 1);
-    logicPin[2] = new RRNode(RRNode::CB_WIRE, r, c, 2);
-    logicPin[3] = new RRNode(RRNode::CB_WIRE, r, c, 1);
-    logicPin[4] = new RRNode(RRNode::CB_WIRE, r, c, 2);
+    logicPin[1] = new RRNode(RRNode::CB_WIRE, x, y, 1);
+    logicPin[2] = new RRNode(RRNode::CB_WIRE, x, y, 2);
+    logicPin[3] = new RRNode(RRNode::CB_WIRE, x, y, 3);
+    logicPin[4] = new RRNode(RRNode::CB_WIRE, x, y, 4);
 
     rrNodes.push_back(logicPin[1]);
     rrNodes.push_back(logicPin[2]);

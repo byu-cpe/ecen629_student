@@ -29,7 +29,7 @@ private:
   std::vector<FpgaTile *> tiles;
 
 public:
-  FpgaTile &getTile(int r, int c) { return *(tileMap[r][c]); }
+  FpgaTile &getTile(int x, int y) { return *(tileMap[x][y]); }
   std::vector<FpgaTile *> &getTiles() { return tiles; }
 
   int getN() { return N; }
