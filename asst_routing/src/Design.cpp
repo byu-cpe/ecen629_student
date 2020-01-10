@@ -6,6 +6,8 @@
  */
 
 #include <iostream>
+#include <list>
+#include <set>
 
 #include "Design.h"
 
@@ -51,4 +53,16 @@ void Design::addNet(Net &net) {
   }
 
   nets.push_back(&net);
+}
+
+bool Design::verifyRouting() {
+  // Check that each net can route successfully
+  for (auto net : nets) {
+    // std::cout << "Checking net\n";
+
+    bool success = net->verifyRouting();
+    if (!success)
+      return false;
+  }
+  return true;
 }

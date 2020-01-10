@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
   Design design;
 
   // Get nets from circuit file
+  int netIdx = 0;
   while (true) {
     getline(fp, line);
     trim(line);
@@ -64,7 +65,7 @@ int main(int argc, char **argv) {
       break;
 
     std::cout << "(" << x << ", " << y << ")." << p << " to ";
-    Net *net = new Net(fpga.getTile(x, y).getLogicPin(p));
+    Net *net = new Net(fpga.getTile(x, y).getLogicPin(p), netIdx++);
 
     // Read list of sinks
     while (iss >> xStr) {
@@ -91,6 +92,10 @@ int main(int argc, char **argv) {
 
   while (1) {
     router.routeDesign(fpga, design);
+    bool success = design.verifyRouting();
+    if (!success) {
+      std::cout << "Error: Routing not complete\n";
+    }
     Drawer::draw();
     Drawer::loop();
   }

@@ -32,6 +32,8 @@ public:
   Net &getNet(int idx) { return *(nets[idx]); }
 
   std::vector<Net *> &getNets() { return nets; }
+
+  bool verifyRouting();
 };
 
 #endif /* DESIGN_H_ */
