@@ -34,6 +34,7 @@ public:
 
   int getN() { return N; }
   int getW() { return W; }
+  int getNumSegmentsUsed();
 };
 
 #endif /* FPGA_H_ */

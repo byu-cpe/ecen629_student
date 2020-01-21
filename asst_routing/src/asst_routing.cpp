@@ -95,6 +95,9 @@ int main(int argc, char **argv) {
     bool success = design.verifyRouting();
     if (!success) {
       std::cout << "Error: Routing not complete\n";
+    } else {
+      std::cout << "Routing check passed\n";
+      std::cout << "Segments used: " << fpga.getNumSegmentsUsed() << "\n";
     }
     Drawer::draw();
     Drawer::loop();

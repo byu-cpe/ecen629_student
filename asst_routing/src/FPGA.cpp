@@ -7,6 +7,7 @@
 
 #include "FPGA.h"
 #include "FpgaTile.h"
+#include "RRNode.h"
 
 FPGA::FPGA(int gridSize, int W) : N(gridSize), W(W) {
 
@@ -43,4 +44,13 @@ FPGA::FPGA(int gridSize, int W) : N(gridSize), W(W) {
 
 FPGA::~FPGA() {
   // TODO Auto-generated destructor stub
+}
+
+int FPGA::getNumSegmentsUsed() {
+  int cnt = 0;
+  for (auto tile : tiles)
+    for (auto rrNode : tile->getRRNodes())
+      if (rrNode->isUsed())
+        cnt++;
+  return cnt;
 }
