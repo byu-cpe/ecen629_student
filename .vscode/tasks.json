@@ -2,21 +2,50 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "options": {
-        "cwd": "${workspaceFolder}/asst_routing/build"
-    },
+   
     "tasks": [
         {
-            "label": "cmake",
+            "label": "cmake - routing",
             "type": "shell",
             "command": "cmake",
             "args": [
                 ".."
             ],
-            "group": "build"
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/asst_routing/build"
+            }
         },
         {
-            "label": "make",
+            "label": "cmake - placement",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                ".."
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/asst_placement/build"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "make - routing",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "-j20"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/asst_routing/build"
+            }
+        },
+        {
+            "label": "make - placement",
             "type": "shell",
             "command": "make",
             "args": [
@@ -28,7 +57,10 @@
             },
             "problemMatcher": [
                 "$gcc"
-            ]
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/asst_placement/build"
+            }
         }
     ]
 }

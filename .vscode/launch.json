@@ -1,0 +1,90 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/asst_placement/build/src/placer",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "gen_design",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/asst_routing/scripts/gen_design.py",
+            "args": ["${workspaceFolder}/asst_routing/circuits/huge", "40", "0.5"]
+        },
+        {
+            "name": "Route",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/asst_routing/build/src/asst_routing",
+            "args": [
+                "asst_routing/circuits/med_dense", "17"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DISPLAY",
+                    "value": "localhost:0.0"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "make-router"
+        },
+        {
+            "name": "Place",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/asst_placement/build/src/placer",
+            "args": [
+                "asst_placement/circuits/cct1"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DISPLAY",
+                    "value": "localhost:0.0"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "make-placement"
+        }
+    ]
+}

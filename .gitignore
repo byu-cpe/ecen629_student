@@ -4,3 +4,4 @@ CMakeFiles
 Makefile
 *.so
 asst_routing/build
+asst_placement/build
