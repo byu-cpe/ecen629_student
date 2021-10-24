@@ -1,7 +1,1 @@
-CMakeCache.txt
-CMakeFiles
-*.cmake
-Makefile
-*.so
-asst_routing/build
-asst_placement/build
+build

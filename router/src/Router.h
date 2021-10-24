@@ -6,9 +6,9 @@ class Design;
 
 class Router {
 public:
-  Router();
-  ~Router();
-  void routeDesign(FPGA &fpga, Design &design);
+  Router(){};
+  virtual ~Router(){};
+  virtual void routeDesign(FPGA &fpga, Design &design) = 0;
 };
 
 #endif

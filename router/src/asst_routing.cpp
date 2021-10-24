@@ -20,14 +20,42 @@ Drawer *drawer;
 
 void drawscreen() { drawer->draw(); }
 
-// Main takes 2 command-line arguments:
-// 1 - path to circuit file
-// 2 - channel width to attempt
+// Usage:
+//    ./router [-d] [-p] <circuit_path> <W>
+//
+//  circuit_path: Path to text file describing design (FPGA size + netlist)
+//  W:            Channel width
+//
+//  -d:           Enable display graphics
+//  -p:           Print netlist while reading
 int main(int argc, char **argv) {
   assert(argc == 3);
 
+  bool display = false;
+  bool printNets = false;
+
+  // Get optional arguments
+  int opt;
+  while ((opt = getopt(argc, argv, "dp")) != -1) {
+    switch (opt) {
+    case 'd':
+      display = true;
+      break;
+    case 'p':
+      printNets = true;
+      break;
+    }
+  }
+
+  // Get positional arguments - there should be two, <circuit path> and <W>
+  assert(argc - optind == 2);
+
   // Read circuit file
-  std::string filePath(argv[1]);
+  std::string filePath(argv[optind++]);
+
+  // Read channel width
+  int W = stoi(argv[optind++]);
+
   ifstream fp(filePath);
   string line;
 
@@ -38,7 +66,6 @@ int main(int argc, char **argv) {
   std::cout << "Grid size: " << gridSize << "x" << gridSize << "\n";
 
   // Get # tracks
-  int W = stoi(argv[2]);
   std::cout << "Number of tracks: " << W << "\n";
 
   // Initialize FPGA and design objects
@@ -64,7 +91,8 @@ int main(int argc, char **argv) {
     if (x < 0)
       break;
 
-    std::cout << "(" << x << ", " << y << ")." << p << " to ";
+    if (printNets)
+      std::cout << "(" << x << ", " << y << ")." << p << " to ";
     Net *net = new Net(fpga.getTile(x, y).getLogicPin(p), netIdx++);
 
     // Read list of sinks
@@ -74,32 +102,41 @@ int main(int argc, char **argv) {
       x = stoi(xStr);
       y = stoi(yStr);
       p = stoi(pStr);
-      std::cout << "(" << x << ", " << y << ")." << p << " ";
+      if (printNets)
+        std::cout << "(" << x << ", " << y << ")." << p << " ";
       RRNode &sink = fpga.getTile(x, y).getLogicPin(p);
       net->addSink(sink);
     }
-    cout << "\n";
+    if (printNets)
+      cout << "\n";
     design.addNet(*net);
   }
 
   std::cout << "Starting Routing\n";
 
   // Initialize router
-  Router router;
+  // Router *router = new MyRouter();
 
-  Drawer::setFpga(fpga);
-  Drawer::init();
+  if (display) {
+    Drawer::setFpga(fpga);
+    Drawer::init();
+  }
 
-  while (1) {
-    router.routeDesign(fpga, design);
-    bool success = design.verifyRouting();
-    if (!success) {
-      std::cout << "Error: Routing not complete\n";
-    } else {
-      std::cout << "Routing check passed\n";
-      std::cout << "Segments used: " << fpga.getNumSegmentsUsed() << "\n";
-    }
+  router->routeDesign(fpga, design);
+  bool success = design.verifyRouting();
+  if (!success) {
+    std::cout << "Error: Routing not complete\n";
+  } else {
+    std::cout << "Routing check passed\n";
+    std::cout << "Segments used: " << fpga.getNumSegmentsUsed() << "\n";
+  }
+
+  if (display) {
     Drawer::draw();
     Drawer::loop();
   }
+
+  delete router;
+
+  return !success;
 }
