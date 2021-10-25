@@ -15,7 +15,7 @@ ROUTER_BIN_PATH = ROUTER_PATH / "build" / "src" / "router"
 designs = list(CIRCUITS_PATH.iterdir())
 
 # Uncomment this to override and only run certain designs
-# designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
+designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
 
 
 class TermColors:
@@ -109,7 +109,7 @@ def main():
             while lower_bound < upper_bound:
                 # Try midpoint (except on first try, test the upper bound)
                 test_w = int((lower_bound + upper_bound) / 2) if success else upper_bound
-                if run_router(design, test_w, print_to_stdout=args.print):
+                if run_router(design, test_w, print_to_stdout=args.print)[0]:
                     upper_bound = test_w
                     success = True
                 else:
