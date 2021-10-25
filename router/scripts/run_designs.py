@@ -15,7 +15,7 @@ ROUTER_BIN_PATH = ROUTER_PATH / "build" / "src" / "router"
 designs = list(CIRCUITS_PATH.iterdir())
 
 # Uncomment this to override and only run certain designs
-designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
+# designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
 
 
 class TermColors:
