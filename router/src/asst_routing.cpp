@@ -114,15 +114,14 @@ int main(int argc, char **argv) {
 
   std::cout << "Starting Routing\n";
 
-  // Initialize router
-  // Router *router = new MyRouter();
-
   if (display) {
     Drawer::setFpga(fpga);
     Drawer::init();
   }
 
-  router->routeDesign(fpga, design);
+  // Initialize router
+  // Router *router = new MyRouter();
+  // router->routeDesign(fpga, design);
   bool success = design.verifyRouting();
   if (!success) {
     std::cout << "Error: Routing not complete\n";
@@ -136,7 +135,7 @@ int main(int argc, char **argv) {
     Drawer::loop();
   }
 
-  delete router;
+  // delete router;
 
   return !success;
 }

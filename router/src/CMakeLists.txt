@@ -1,4 +1,11 @@
-file(GLOB asst_routing_srcs "*.cpp"
+file(GLOB asst_routing_srcs 
+    asst_routing.cpp
+    Design.cpp
+    Drawer.cpp
+    FPGA.cpp
+    FpgaTile.cpp
+    RRNode.cpp
+    Net.cpp
 )
 
 add_executable(router ${asst_routing_srcs})
