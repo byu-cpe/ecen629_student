@@ -56,10 +56,10 @@ void Design::randomizeBlockLoc() {
   }
 }
 
-float Design::getHPWL() {
-  float total = 0;
+double Design::calcHPWL() {
+  double total = 0;
   for (auto n : nets) {
-    total += n->getHPWL();
+    total += n->calcHPWL();
   }
   return total;
 }
@@ -81,6 +81,41 @@ Block *Design::getBlock(int idx) {
     if (b->getIdx() == idx)
       return b;
   return nullptr;
+}
+
+
+double Design::calcOverlay() {
+  int G = 10;
+  double Gw = Design::FPGA_SIZE / G;
+
+  int Nmovable = 0;
+  for (auto b : blocks) {
+    if (!b->isFixed())
+      Nmovable++;
+  }
+
+  int Ntotal = 0;
+  int extra = 0;
+  for (int x = 0; x < G; x++) {
+    for (int y = 0; y < G; y++) {
+      int Nr = 0;
+      for (auto b : blocks) {
+        if (b->isFixed() || b->isImaginary())
+          continue;
+        if ((b->getX() >= (x * Gw)) && (b->getX() < ((x + 1) * Gw)) &&
+            (b->getY() >= (y * Gw)) && (b->getY() < ((y + 1) * Gw))) {
+          Nr++;
+          Ntotal++;
+        }
+      }
+      extra += max(0, Nr - 2);
+    }
+  }
+  assert(Ntotal == Nmovable);
+
+  double cond = (extra / (double)Nmovable);
+
+  return cond;
 }
 
 void Design::analyticalPlacement() {

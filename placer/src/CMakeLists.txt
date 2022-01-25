@@ -1,8 +1,4 @@
-file(GLOB placer_srcs "*.cpp"
-)
-
-
-add_executable(placer 
+add_executable(placer
 	placer_main.cpp
 	APEdge.cpp
 	Block.cpp

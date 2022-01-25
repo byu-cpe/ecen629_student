@@ -39,7 +39,8 @@ public:
   std::vector<Net *> &getNets() { return nets; }
 
   void analyticalPlacement();
-  float getHPWL();
+  double calcHPWL();
+  double calcOverlay();
 };
 
 #endif

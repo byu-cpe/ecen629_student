@@ -55,7 +55,7 @@ void Net::deleteAPEdges() {
   apEdgesY.clear();
 }
 
-double Net::getHPWL() {
+double Net::calcHPWL() {
   double minX = Design::FPGA_SIZE;
   double minY = Design::FPGA_SIZE;
   double maxX = 0;

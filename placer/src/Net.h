@@ -27,7 +27,7 @@ public:
   void createAPEdges();
   void deleteAPEdges();
 
-  double getHPWL();
+  double calcHPWL();
 };
 
 #endif
