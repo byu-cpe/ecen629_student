@@ -1,10 +1,3 @@
-/*
- * Block.cpp
- *
- *  Created on: Dec 5, 2017
- *      Author: jgoeders
- */
-
 #include <cassert>
 
 #include "APEdge.h"

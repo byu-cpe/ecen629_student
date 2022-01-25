@@ -1,10 +1,3 @@
-/*
- * Drawer2.cpp
- *
- *  Created on: Dec 5, 2017
- *      Author: jgoeders
- */
-
 #include <cassert>
 
 #include "Block.h"
@@ -16,6 +9,17 @@
 Design *Drawer::design = nullptr;
 
 using namespace std;
+
+static bool show_nets = false;
+
+void draw_hide_rats_nest(void (*drawscreen)()) {
+  if (!show_nets)
+    change_button_text("Show Nets", "Hide Nets");
+  else
+    change_button_text("Hide Nets", "Show Nets");
+  show_nets = !show_nets;
+  drawscreen();
+}
 
 Drawer::Drawer() {
   // TODO Auto-generated constructor stub
@@ -35,6 +39,8 @@ void Drawer::init() {
   //	int totalWidth = fpga->getN() * getTileWidth(fpga->getW());
   init_world(0., 0., Design::FPGA_SIZE + 2 * OUTSIDE_PAD,
              Design::FPGA_SIZE + 2 * OUTSIDE_PAD);
+
+  create_button("Window", "Show Nets", draw_hide_rats_nest);
 
   // This message will show up at the bottom of the window.
   update_message("Interactive graphics example.");
@@ -59,8 +65,8 @@ void Drawer::draw() {
     for (auto b : n->getBlocks())
       if (b->isImaginary())
         imag = true;
-    if (!imag) {
-      //			drawNet(n);
+    if (!imag && show_nets) {
+      drawNet(n);
     }
   }
 }

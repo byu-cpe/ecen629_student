@@ -25,6 +25,7 @@ Block *APEdge::getOtherBlock(Block *block) {
     return b;
   else if (b == block)
     return a;
-  else
-    assert(false);
+
+  assert(false);
+  return NULL;
 }

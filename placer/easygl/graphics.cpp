@@ -2567,7 +2567,7 @@ static void load_font(int pointsize) {
   /* Use proper point-size medium-weight upright helvetica font */
   // Exists on most X11 systems.
   // Backup font:  lucidasans, in the new naming style.
-  sprintf(fontname[0], "-*-clearlyu-*-*-*-*-*-*-*-*-*-*-*-*", pointsize);
+  sprintf(fontname[0], "-*-clearlyu-*-*-*-*-*-*-*-*-*-*-*-*");
   sprintf(fontname[1], "lucidasans-%d", pointsize);
 
   for (ifont = 0; ifont < NUM_FONT_TYPES; ifont++) {
