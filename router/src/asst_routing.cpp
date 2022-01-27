@@ -29,7 +29,7 @@ void drawscreen() { drawer->draw(); }
 //  -d:           Enable display graphics
 //  -p:           Print netlist while reading
 int main(int argc, char **argv) {
-  assert(argc == 3);
+  assert(argc >= 3);
 
   bool display = false;
   bool printNets = false;
