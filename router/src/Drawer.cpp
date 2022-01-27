@@ -195,9 +195,9 @@ void Drawer::draw() {
             int idx = W;
             if (n->getNet() == rr1.getNet()) {
               idx = min(idx, n->getIdx());
-              xW1 = x + (0.5 + idx) * WIRE_SPACING;
+              int xW1Net = x + (0.5 + idx) * WIRE_SPACING;
               setDrawNet(rr1.getNet());
-              drawline(xW1, yW, xW2, yW);
+              drawline(xW1Net, yW, xW2, yW);
             }
           }
         }
@@ -214,9 +214,9 @@ void Drawer::draw() {
             int idx = W;
             if (n->getNet() == rr2.getNet()) {
               idx = min(idx, n->getIdx());
-              xW1 = x + (0.5 + idx) * WIRE_SPACING;
+              int xW1Net = x + (0.5 + idx) * WIRE_SPACING;
               setDrawNet(rr2.getNet());
-              drawline(xW1, yW, xW2, yW);
+              drawline(xW1Net, yW, xW2, yW);
             }
           }
         }
@@ -235,9 +235,9 @@ void Drawer::draw() {
             int idx = 0;
             if (n->getNet() == rr3.getNet()) {
               idx = max(idx, n->getIdx());
-              yW1 = y + (W - 0.5 - idx) * WIRE_SPACING;
+              int yW1Net = y + (W - 0.5 - idx) * WIRE_SPACING;
               setDrawNet(rr3.getNet());
-              drawline(xW, yW1, xW, yW2);
+              drawline(xW, yW1Net, xW, yW2);
             }
           }
         }
@@ -254,9 +254,9 @@ void Drawer::draw() {
             int idx = 0;
             if (n->getNet() == rr4.getNet()) {
               idx = max(idx, n->getIdx());
-              yW1 = y + (W - 0.5 - idx) * WIRE_SPACING;
+              int yW1Net = y + (W - 0.5 - idx) * WIRE_SPACING;
               setDrawNet(rr4.getNet());
-              drawline(xW, yW1, xW, yW2);
+              drawline(xW, yW1Net, xW, yW2);
             }
           }
         }
