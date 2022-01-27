@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 
   // Print results
   std::cout << "HPWL (after legalization): " << design.calcHPWL() << "\n";
-  std::cout << "Overlay: " << design.calcOverlay() << "\n";
+  std::cout << "Overlap cost: " << design.calcOverlay() << "\n";
   Drawer::draw();
   Drawer::loop();
 }
