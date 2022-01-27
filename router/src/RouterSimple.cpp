@@ -30,10 +30,10 @@ void RouterSimple::routeDesign(FPGA &fpga, Design &design) {
   int numRouted = 0;
   int N = design.getNets().size();
   for (auto net : design.getNets()) {
-    if (graphics_enabled) {
-      Drawer::draw();
-      Drawer::loop();
-    }
+    // if (graphics_enabled) {
+    //   Drawer::draw();
+    //   Drawer::loop();
+    // }
     std::cout << "Routing net " << i << " of " << N;
     bool success = mazeRouter.routeNetAndCommit(*net);
     if (!success)

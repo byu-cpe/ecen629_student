@@ -18,7 +18,6 @@ Net::Net(int idx) : idx(idx) {
   // TODO Auto-generated constructor stub
 }
 
-// Net::Net(double weight) : imaginary(true), weight(weight) {}
 
 Net::~Net() {
   // TODO Auto-generated destructor stub
@@ -33,8 +32,8 @@ void Net::createAPEdges() {
   int p = blocks.size();
   for (auto iter1 = blocks.begin(); iter1 != blocks.end(); ++iter1) {
     for (auto iter2 = next(iter1); iter2 != blocks.end(); ++iter2) {
-      apEdgesX.insert(new APEdge(*iter1, *iter2, 2.0 / blocks.size(), true));
-      apEdgesY.insert(new APEdge(*iter1, *iter2, 2.0 / blocks.size(), false));
+      apEdgesX.insert(new APEdge(*iter1, *iter2, 2.0 / p, true));
+      apEdgesY.insert(new APEdge(*iter1, *iter2, 2.0 / p, false));
     }
   }
 }

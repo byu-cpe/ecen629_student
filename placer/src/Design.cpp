@@ -33,7 +33,6 @@ Design::~Design() {
 
 Block *Design::addBlock(int idx) {
   Block *block = new Block(idx);
-  assert(block != nullptr);
   blocks.push_back(block);
   return block;
 }
@@ -48,7 +47,7 @@ Net *Design::getOrCreateNet(int idx) {
   return net;
 }
 
-void Design::randomizeBlockLoc() {
+void Design::randomizePlacement() {
   for (auto b : blocks) {
     if (b->isFixed())
       continue;
@@ -83,8 +82,7 @@ Block *Design::getBlock(int idx) {
   return nullptr;
 }
 
-
-double Design::calcOverlay() {
+int Design::calcOverlay() {
   int G = 10;
   double Gw = Design::FPGA_SIZE / G;
 
@@ -113,9 +111,7 @@ double Design::calcOverlay() {
   }
   assert(Ntotal == Nmovable);
 
-  double cond = (extra / (double)Nmovable);
-
-  return cond;
+  return extra;
 }
 
 void Design::analyticalPlacement() {
@@ -126,4 +122,6 @@ void Design::analyticalPlacement() {
   // Solve matrix using UMF pack
 
   // Extract solution and set block x,y locations
+}
+void Design::legalizePlacement() {
 }

@@ -16,7 +16,7 @@ designs = list(CIRCUITS_PATH.iterdir())
 
 # Uncomment this to override and only run certain designs
 # This only applies to --find_min_w, otherwise any designs in minw.csv will be parsed and run.
-# designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
+designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
 
 
 class TermColors:

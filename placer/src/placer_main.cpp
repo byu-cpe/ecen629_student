@@ -10,27 +10,25 @@
 #include "Net.h"
 #include "easygl/graphics.h"
 
-using namespace std;
-
 int main(int argc, char **argv) {
   assert(argc == 2);
 
-  string filePath(argv[1]);
+  std::string filePath(argv[1]);
 
-  ifstream fp(filePath);
+  std::ifstream fp(filePath);
   assert(fp.good());
 
-  string line;
+  std::string line;
 
   Design design;
 
   while (true) {
     getline(fp, line);
-    istringstream iss(line);
+    std::istringstream iss(line);
 
-    string sBlockIdx;
+    std::string sBlockIdx;
     iss >> sBlockIdx;
-    int blockIdx = stoi(sBlockIdx);
+    int blockIdx = std::stoi(sBlockIdx);
 
     if (blockIdx == -1)
       break;
@@ -43,7 +41,6 @@ int main(int argc, char **argv) {
       int netIdx = stoi(sNetNum);
       if (netIdx == -1)
         break;
-
       Net *net = design.getOrCreateNet(netIdx);
       block->addNet(net);
       net->addBlock(block);
@@ -52,33 +49,46 @@ int main(int argc, char **argv) {
 
   while (true) {
     getline(fp, line);
-    istringstream iss(line);
+    std::istringstream iss(line);
 
-    string sBlockIdx;
+    std::string sBlockIdx;
     iss >> sBlockIdx;
-    int blockIdx = stoi(sBlockIdx);
+    int blockIdx = std::stoi(sBlockIdx);
 
     if (blockIdx == -1)
       break;
 
-    string sX, sY;
+    std::string sX, sY;
     iss >> sX;
     iss >> sY;
 
-    int x = stoi(sX);
-    int y = stoi(sY);
+    int x = std::stoi(sX);
+    int y = std::stoi(sY);
     Block *block = design.getBlock(blockIdx);
     block->setLoc(x, y);
     block->setFixed(true);
   }
 
-  design.randomizeBlockLoc();
+  design.randomizePlacement();
 
   Drawer::setDesign(&design);
   Drawer::init();
   Drawer::draw();
-  cout << "HPWL (random placement): " << design.getHPWL() << "\n";
+  flushinput();
+  std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
   Drawer::loop();
 
+  // Perform analytical placement
   design.analyticalPlacement();
+  std::cout << "HPWL (after AP): " << design.calcHPWL() << "\n";
+  Drawer::draw();
+  Drawer::loop();
+
+  design.legalizePlacement();
+
+  // Print results
+  std::cout << "HPWL (after legalization): " << design.calcHPWL() << "\n";
+  std::cout << "Overlay: " << design.calcOverlay() << "\n";
+  Drawer::draw();
+  Drawer::loop();
 }
