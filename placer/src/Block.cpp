@@ -27,19 +27,21 @@ void Block::addApEdgeY(APEdge *edge) {
 }
 
 double Block::getApEdgeWeightX(Block *b) {
+  double ret = 0;
   for (auto e : apEdgesX) {
     if (e->getOtherBlock(this) == b)
-      return e->getWeight();
+      ret += e->getWeight();
   }
-  return 0.;
+  return ret;
 }
 
 double Block::getApEdgeWeightY(Block *b) {
+  double ret = 0;
   for (auto e : apEdgesY) {
     if (e->getOtherBlock(this) == b)
-      return e->getWeight();
+      ret += e->getWeight();
   }
-  return 0.;
+  return ret;
 }
 
 void Block::removeApEdgeX(APEdge *edge) { apEdgesX.erase(edge); }
