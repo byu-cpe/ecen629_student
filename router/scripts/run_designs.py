@@ -6,17 +6,29 @@ import subprocess
 import sys
 import pandas
 import re
+from sys import platform
 
 ROUTER_PATH = pathlib.Path(__file__).absolute().parent.parent
 CIRCUITS_PATH = ROUTER_PATH / "circuits"
 RESULTS_PATH = ROUTER_PATH / "results"
 ROUTER_BIN_PATH = ROUTER_PATH / "build" / "src" / "router"
 
+TIME_PATH = "/usr/bin/time"
+# time doesn't have a -v option on mac, install gtime using `brew install gnu-time`
+if platform == "darwin":
+    TIME_PATH = "gtime"
+
+    # check for gtime
+    gtime_check = subprocess.run(["which", f"{TIME_PATH}"], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    if gtime_check.returncode != 0:
+        print("time doesn't have a -v option on mac, install gtime using `brew install gnu-time`", file=sys.stderr)
+        sys.exit(1)
+
 designs = list(CIRCUITS_PATH.iterdir())
 
 # Uncomment this to override and only run certain designs
 # This only applies to --find_min_w, otherwise any designs in minw.csv will be parsed and run.
-designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
+# designs = [CIRCUITS_PATH / s for s in ["tiny", "small_dense", "med_dense", "med_sparse"]]
 
 
 class TermColors:
@@ -37,10 +49,10 @@ def print_color(color, *msg):
     print(color + " ".join(str(item) for item in msg), TermColors.END)
 
 
-def error(*msg, returncode=-1):
+def error(*msg, return_code=-1):
     """Print an error message and exit program"""
     print_color(TermColors.RED, "ERROR:", *msg)
-    sys.exit(returncode)
+    sys.exit(return_code)
 
 
 def run_router(circuit, w, print_to_stdout=False):
@@ -49,7 +61,7 @@ def run_router(circuit, w, print_to_stdout=False):
     runtime = None
 
     print_color(TermColors.PURPLE, "Routing", circuit.name, "W =", w)
-    cmd = ["/usr/bin/time", "-v", str(ROUTER_BIN_PATH), str(circuit), str(w)]
+    cmd = [TIME_PATH, "-v", str(ROUTER_BIN_PATH), str(circuit), str(w)]
 
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True
@@ -62,7 +74,7 @@ def run_router(circuit, w, print_to_stdout=False):
     stdout += proc.communicate()[0]
 
     # Get segments used
-    m = re.search("^Segments used: (\d+)$", stdout, re.M)
+    m = re.search(r"^Segments used: (\d+)$", stdout, re.M)
     if m:
         segments = int(m.group(1))
 
@@ -77,13 +89,13 @@ def run_router(circuit, w, print_to_stdout=False):
         runtime = float(m.group(1))
 
     success = not proc.returncode
-    return (success, segments, runtime, mem)
+    return success, segments, runtime, mem
 
 
 # Usage
 # ./run_designs.py
 #
-# This will read in your minimium channel width file (results/minw.csv) and run each design
+# This will read in your minimum channel width file (results/minw.csv) and run each design
 # with (W=Wmin) and (W=1.3*Wmin), collecting segment, runtime and memory results.
 #
 # --find_min_w: Perform a binary search to find the minimum channel width that is routable, and
@@ -104,7 +116,7 @@ def main():
             print_color(TermColors.BLUE, design.name)
 
             # Binary search
-            upper_bound = 50
+            upper_bound = 60
             lower_bound = 1
             success = False
             while lower_bound < upper_bound:
