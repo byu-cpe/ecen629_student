@@ -17,7 +17,7 @@
 #include "Net.h"
 #include "easygl/graphics.h"
 
-#include <suitesparse/umfpack.h>
+#include <umfpack.h>
 
 using namespace std;
 
