@@ -7,5 +7,5 @@ add_executable(placer
 	Net.cpp
 )
 
-target_link_libraries(placer easygl X11 umfpack)
+target_link_libraries(placer easygl ${UMFPACK_LIB})
 
