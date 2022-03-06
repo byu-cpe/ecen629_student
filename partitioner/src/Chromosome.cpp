@@ -54,7 +54,7 @@ void Chromosome::recalcCutCost() {
     bool part0 = false;
     bool part1 = false;
     for (auto b : n->getBlocks()) {
-      if (genes[b->getIdx()])
+      if (genes[b->getIdx() - 1])
         part1 = true;
       else
         part0 = true;
