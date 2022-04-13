@@ -6,4 +6,5 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(.)
+add_subdirectory(easygl)
 add_subdirectory(src)

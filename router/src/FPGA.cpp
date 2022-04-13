@@ -43,7 +43,9 @@ FPGA::FPGA(int gridSize, int W) : N(gridSize), W(W) {
 }
 
 FPGA::~FPGA() {
-  // TODO Auto-generated destructor stub
+  for (auto tile : tiles) {
+    delete tile;
+  }
 }
 
 int FPGA::getNumSegmentsUsed() {

@@ -19,7 +19,9 @@ using namespace std;
 Design::Design() {}
 
 Design::~Design() {
-  // TODO Auto-generated destructor stub
+  for (auto net : nets) {
+    delete net;
+  }
 }
 
 // Add a new net to the design

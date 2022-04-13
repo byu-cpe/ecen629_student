@@ -14,13 +14,16 @@
 
 using namespace std;
 
-Net::Net(int idx) : idx(idx) {
-  // TODO Auto-generated constructor stub
-}
-
+Net::Net(int idx) : idx(idx) {}
 
 Net::~Net() {
-  // TODO Auto-generated destructor stub
+  for (auto edge : apEdgesX) {
+    delete edge;
+  }
+
+  for (auto edge : apEdgesY) {
+    delete edge;
+  }
 }
 
 void Net::addBlock(Block *block) {

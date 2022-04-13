@@ -12,12 +12,12 @@
 
 FpgaTile::FpgaTile(int x, int y, int W)
     : x(x), y(y), W(W), left(nullptr), right(nullptr), up(nullptr),
-      down(nullptr) {
-  // TODO Auto-generated constructor stub
-}
+      down(nullptr) {}
 
 FpgaTile::~FpgaTile() {
-  // TODO Auto-generated destructor stub
+  for (auto node : rrNodes) {
+    delete node;
+  }
 }
 
 void FpgaTile::generateContents() {

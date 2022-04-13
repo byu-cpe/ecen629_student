@@ -23,12 +23,15 @@ using namespace std;
 
 const float Design::FPGA_SIZE = 100.0;
 
-Design::Design() {
-  // TODO Auto-generated constructor stub
-}
+Design::Design() {}
 
 Design::~Design() {
-  // TODO Auto-generated destructor stub
+  for (Block *block : blocks) {
+    delete block;
+  }
+  for (Net *net : nets) {
+    delete net;
+  }
 }
 
 Block *Design::addBlock(int idx) {
@@ -123,5 +126,4 @@ void Design::analyticalPlacement() {
 
   // Extract solution and set block x,y locations
 }
-void Design::legalizePlacement() {
-}
+void Design::legalizePlacement() {}
