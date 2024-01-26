@@ -10,10 +10,8 @@
 #include "Net.h"
 #include "easygl/graphics.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   std::string line;
-  Design design;
 
   // Open the circuit file
   assert(argc == 2);
@@ -22,10 +20,26 @@ int main(int argc, char **argv)
   assert(fp.good());
 
   getline(fp, line);
-  design.setSize(std::stoi(line));
 
-  while (true)
-  {
+  Design design(std::stoi(line));
+
+  // Get the fixed I/O blocks
+  while (true) {
+    getline(fp, line);
+    if (line.size() == 0)
+      break;
+    std::istringstream iss(line);
+
+    int blockIdx;
+    int x, y;
+    iss >> blockIdx >> x >> y;
+
+    printf("New block %d at %d %d\n", blockIdx, x, y);
+
+    Block *block = design.addBlock(blockIdx, x, y);
+  }
+
+  while (true) {
     getline(fp, line);
     std::cout << "Line:" << line << "\n";
     if (line.size() == 0)
@@ -33,49 +47,26 @@ int main(int argc, char **argv)
 
     // Get the block numbers
     std::istringstream iss(line);
-    std::string sBlockIdx;
-    iss >> sBlockIdx;
-    int blockIdx = std::stoi(sBlockIdx);
-    Block *block = design.addBlock(blockIdx);
+    int blockIdx;
+    iss >> blockIdx;
+    Block *block = design.getBlock(blockIdx);
+    if (!block) {
+      std::cout << "Block " << blockIdx << " not found\n";
+      block = design.addBlock(blockIdx);
+    }
 
-    std::string sNetNum;
-    while (iss >> sNetNum)
-    {
-      int netIdx = stoi(sNetNum);
+    int netIdx;
+    while (iss >> netIdx) {
       std::cout << "Net " << netIdx << "\n";
       Net *net = design.getOrCreateNet(netIdx);
-      block->addNet(net);
+      assert(net);
       net->addBlock(block);
     }
   }
-  std::cout << "Number of blocks: " << design.getNumBlocks() << "\n";
 
-  while (true)
-  {
-    getline(fp, line);
-    if (line.size() == 0)
-      break;
-    std::istringstream iss(line);
-
-    std::string sBlockIdx;
-    iss >> sBlockIdx;
-    int blockIdx = std::stoi(sBlockIdx);
-
-    std::string sX, sY;
-    iss >> sX;
-    iss >> sY;
-
-    int x = std::stoi(sX);
-    int y = std::stoi(sY);
-    Block *block = design.getBlock(blockIdx);
-    block->setLoc(x, y);
-    block->setFixed(true);
-  }
-
-  design.randomizePlacement();
-
-  Drawer::setDesign(&design);
+  Drawer::setDesign(design);
   Drawer::init();
+  std::cout << "Number of blocks: " << design.getNumBlocks() << "\n";
   Drawer::draw();
   flushinput();
   std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
@@ -84,6 +75,10 @@ int main(int argc, char **argv)
   // Perform analytical placement
   // design.analyticalPlacement();
   std::cout << "HPWL (after placement): " << design.calcHPWL() << "\n";
+  Drawer::draw();
+  Drawer::loop();
+  // Perform analytical placement
+  // Perform analytical placement
   Drawer::draw();
   Drawer::loop();
 }

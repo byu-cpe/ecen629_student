@@ -5,26 +5,29 @@
 #include <vector>
 
 class Block;
-class APEdge;
 
 // Class representing a Net in the design
 class Net {
 public:
   // Create a net with given idx value
-  Net(int idx);
+  Net(Design &design, int idx);
 
   virtual ~Net();
 
+  // Net cannot be copied
+  Net(const Net &) = delete;
+  Net &operator=(const Net &) = delete;
+  Net(Net &&) = default;            // Move constructor
+  Net &operator=(Net &&) = default; // Move assignment operator
+
 private:
+  Design &design;
+
   // Net idx value for real nets
   int idx;
 
   // List of blocks this Net connects to
   std::vector<Block *> blocks;
-
-  // List of APEdges in X and Y dimension for this Net
-  std::set<APEdge *> apEdgesX;
-  std::set<APEdge *> apEdgesY;
 
 public:
   // Return the net idx value
@@ -36,12 +39,10 @@ public:
   // Get a list of blocks this Net connects to
   std::vector<Block *> &getBlocks() { return blocks; }
 
-  // Create/Delete APEdges that represent this Net
-  void createAPEdges();
-  void deleteAPEdges();
-
   // Calculate the half-perimeter wire length for this Net
-  double calcHPWL();
+  int calcHPWL();
+
+private:
 };
 
 #endif

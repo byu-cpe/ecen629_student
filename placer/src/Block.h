@@ -6,6 +6,7 @@
 class Net;
 class APEdge;
 class Partition;
+class Design;
 
 // A Block in the Design
 // This can be either a moveable block, a fixed block, or an imaginary block
@@ -13,30 +14,39 @@ class Partition;
 class Block {
 public:
   // Create a block with a given idx value
-  Block(int idx);
+  Block(Design &design, int idx);
+
+  // Create a block at a constrained x,y location (I/O block)
+  Block(Design &design, int idx, int x, int y);
 
   virtual ~Block();
 
+  // Block cannot be moved or copied
+  Block(const Block &) = delete;
+  Block &operator=(const Block &) = delete;
+  Block(Block &&) = default;            // Move constructor
+  Block &operator=(Block &&) = default; // Move assignment operator
+
 private:
+  Design &design;
+
   // Block idx value from netlist
   int idx;
 
-   // Nets that this block is connected to
+  // Nets that this block is connected to
   std::set<Net *> nets;
 
   // X, Y location of block
-  double x;
-  double y;
+  int x;
+  int y;
+
+  // Whether block has been placed
+  bool placed;
 
   // Whether block is fixed (perimter I/O)
   bool fixed;
 
-  // Whether block is imaginary
-  bool imaginary;
-
-  // Set of edges in X and Y direction that this block connects to
-  std::set<APEdge *> apEdgesX;
-  std::set<APEdge *> apEdgesY;
+  void unplace();
 
 public:
   // Return block idx value
@@ -46,34 +56,17 @@ public:
   void addNet(Net *net);
 
   // Get/Set the block locations
-  void setLoc(double x, double y) {
-    this->x = x;
-    this->y = y;
-  }
-  void setX(double x) { this->x = x; }
-  void setY(double y) { this->y = y; }
-  double getX() { return x; }
-  double getY() { return y; }
+  void place(int x, int y);
+  void place(int xy);
 
   // Set block properties
   void setFixed(bool fixed) { this->fixed = fixed; }
   bool isFixed() { return fixed; }
-  void setImaginary(bool imaginary) { this->imaginary = imaginary; }
-  bool isImaginary() { return imaginary; }
 
-  // Get list of APEdges
-  std::set<APEdge *> &getApEdgesX() { return apEdgesX; }
-  std::set<APEdge *> &getApEdgesY() { return apEdgesY; }
+  int getX() { return x; }
+  int getY() { return y; }
 
-  // Add or remove APEdge
-  void addApEdgeX(APEdge *edge);
-  void addApEdgeY(APEdge *edge);
-  void removeApEdgeX(APEdge *edge);
-  void removeApEdgeY(APEdge *edge);
-
-  // Get APEdge weight that connects this block to block b.
-  double getApEdgeWeightX(Block *b);
-  double getApEdgeWeightY(Block *b);
+private:
 };
 
 #endif
