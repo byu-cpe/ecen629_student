@@ -41,6 +41,7 @@ void Block::place(int x, int y) {
 
   this->x = x;
   this->y = y;
+  printf("Block %d placed at %d, %d\n", idx, x, y);
   design.getDevice().placeBlock(x, y, *this);
 }
 

@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
   std::cout << "Number of blocks: " << design.getNumBlocks() << "\n";
   Drawer::draw();
   flushinput();
+  design.randomizePlacement();
   std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
   Drawer::loop();
 

@@ -57,8 +57,22 @@ void Drawer::draw() {
   int size = design->getDevice().getSize();
   for (int y = 0; y < size; y++) {
     for (int x = 0; x < size; x++) {
+      if (!design->getDevice().exists(x, y))
+        continue;
+      if (design->getDevice().isFixedIO(x, y)) {
+        setcolor(LIGHTGREY);
+        fillrect(getXY(x), getXY(y), getXY(x) + BLOCK_SIZE,
+                 getXY(y) + BLOCK_SIZE);
+      }
+      setcolor(BLACK);
       drawrect(getXY(x), getXY(y), getXY(x) + BLOCK_SIZE,
                getXY(y) + BLOCK_SIZE);
+      // Check if block is here
+      Block *b = design->getDevice().getBlock(x, y);
+      if (b) {
+        drawtext(getXY(x) + BLOCK_SIZE / 2, getXY(y) + BLOCK_SIZE / 2,
+                 std::to_string(b->getIdx()).c_str(), BLOCK_SIZE);
+      }
     }
     // Draw blocks
     // for (auto &b : design.getBlocks()) {
