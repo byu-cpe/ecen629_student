@@ -24,7 +24,17 @@ Design::Design(int deviceSize) : fpga(deviceSize) {
   // TODO Auto-generated constructor stub
 }
 
-Design::~Design() {}
+Design::~Design() {
+  // Delete nets
+  for (auto n : nets) {
+    delete n;
+  }
+
+  // Delete blocks
+  for (auto b : blocks) {
+    delete b;
+  }
+}
 
 Block *Design::addBlock(int idx) {
   Block *block = new Block(*this, idx);
