@@ -10,120 +10,77 @@
 #include <cmath>
 #include <iostream>
 
-#include "APEdge.h"
 #include "Block.h"
 #include "Design.h"
 #include "Drawer.h"
 #include "Net.h"
 #include "easygl/graphics.h"
 
-#include <suitesparse/umfpack.h>
-
 using namespace std;
 
-const float Design::FPGA_SIZE = 100.0;
+// const float Design::FPGA_SIZE = 100.0;
 
-Design::Design() {}
+Design::Design(int deviceSize) : fpga(deviceSize) {
+  // TODO Auto-generated constructor stub
+}
 
 Design::~Design() {
-  for (Block *block : blocks) {
-    delete block;
+  // Delete nets
+  for (auto n : nets) {
+    delete n;
   }
-  for (Net *net : nets) {
-    delete net;
+
+  // Delete blocks
+  for (auto b : blocks) {
+    delete b;
   }
 }
 
 Block *Design::addBlock(int idx) {
-  Block *block = new Block(idx);
+  Block *block = new Block(*this, idx);
   blocks.push_back(block);
+  blockMap[idx] = block;
+  return block;
+}
+
+Block *Design::addBlock(int idx, int x, int y) {
+  Block *block = new Block(*this, idx, x, y);
+  blocks.push_back(block);
+  fpga.placeBlock(x, y, *block);
+  blockMap[idx] = block;
   return block;
 }
 
 Net *Design::getOrCreateNet(int idx) {
-  for (auto n : nets) {
-    if (n->getIdx() == idx)
-      return n;
+  if (netMap.find(idx) != netMap.end()) {
+    return netMap[idx];
   }
-  Net *net = new Net(idx);
+
+  Net *net = new Net(*this, idx);
   nets.push_back(net);
+  netMap[idx] = net;
   return net;
 }
 
-void Design::randomizePlacement() {
-  for (auto b : blocks) {
-    if (b->isFixed())
-      continue;
-    b->setLoc(rand() % ((int)FPGA_SIZE), rand() % ((int)FPGA_SIZE));
-  }
-}
-
-double Design::calcHPWL() {
-  double total = 0;
+int Design::calcHPWL() {
+  int total = 0;
   for (auto n : nets) {
     total += n->calcHPWL();
   }
   return total;
 }
 
-void Design::createApEdges() {
-  for (auto n : nets) {
-    n->createAPEdges();
-  }
-}
-
-void Design::removeApEdges() {
-  for (auto n : nets) {
-    n->deleteAPEdges();
-  }
-}
-
 Block *Design::getBlock(int idx) {
-  for (auto b : blocks)
-    if (b->getIdx() == idx)
-      return b;
-  return nullptr;
+  if (blockMap.find(idx) == blockMap.end()) {
+    return nullptr;
+  }
+  return blockMap[idx];
 }
 
-int Design::calcOverlay() {
-  int G = 10;
-  double Gw = Design::FPGA_SIZE / G;
-
-  int Nmovable = 0;
+void Design::unplaceAllBlocks() {
   for (auto b : blocks) {
-    if (!b->isFixed())
-      Nmovable++;
+    if (b->isFixed())
+      continue;
+    b->unplace();
   }
-
-  int Ntotal = 0;
-  int extra = 0;
-  for (int x = 0; x < G; x++) {
-    for (int y = 0; y < G; y++) {
-      int Nr = 0;
-      for (auto b : blocks) {
-        if (b->isFixed() || b->isImaginary())
-          continue;
-        if ((b->getX() >= (x * Gw)) && (b->getX() < ((x + 1) * Gw)) &&
-            (b->getY() >= (y * Gw)) && (b->getY() < ((y + 1) * Gw))) {
-          Nr++;
-          Ntotal++;
-        }
-      }
-      extra += max(0, Nr - 2);
-    }
-  }
-  assert(Ntotal == Nmovable);
-
-  return extra;
 }
-
-void Design::analyticalPlacement() {
-  createApEdges();
-
-  // Build matrix
-
-  // Solve matrix using UMF pack
-
-  // Extract solution and set block x,y locations
-}
-void Design::legalizePlacement() {}

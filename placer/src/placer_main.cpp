@@ -11,84 +11,103 @@
 #include "easygl/graphics.h"
 
 int main(int argc, char **argv) {
-  assert(argc == 2);
+  std::string line;
 
-  std::string filePath(argv[1]);
+  assert(argc >= 2);
 
+  bool display = false;
+
+  // Get optional arguments
+  int opt;
+  while ((opt = getopt(argc, argv, "d")) != -1) {
+    switch (opt) {
+    case 'd':
+      display = true;
+      break;
+    }
+  }
+
+  // Get positional arguments - there should be one: <circuit path>
+  assert(argc - optind == 1);
+
+  // Read circuit file
+  std::string filePath(argv[optind++]);
+
+  // Open the circuit file
   std::ifstream fp(filePath);
   assert(fp.good());
 
-  std::string line;
+  getline(fp, line);
 
-  Design design;
+  Design design(std::stoi(line));
+
+  // Get the fixed I/O blocks
+  while (true) {
+    getline(fp, line);
+    if (line.size() == 0)
+      break;
+    std::istringstream iss(line);
+
+    int blockIdx;
+    int x, y;
+    iss >> blockIdx >> x >> y;
+
+    Block *block = design.addBlock(blockIdx, x, y);
+  }
 
   while (true) {
     getline(fp, line);
-    std::istringstream iss(line);
-
-    std::string sBlockIdx;
-    iss >> sBlockIdx;
-    int blockIdx = std::stoi(sBlockIdx);
-
-    if (blockIdx == -1)
+    if (line.size() == 0)
       break;
 
-    Block *block = design.addBlock(blockIdx);
+    // Get the block numbers
+    std::istringstream iss(line);
+    int blockIdx;
+    iss >> blockIdx;
+    Block *block = design.getBlock(blockIdx);
+    if (!block) {
+      block = design.addBlock(blockIdx);
+    }
 
-    std::string sNetNum;
-    while (true) {
-      iss >> sNetNum;
-      int netIdx = stoi(sNetNum);
-      if (netIdx == -1)
-        break;
+    int netIdx;
+    while (iss >> netIdx) {
       Net *net = design.getOrCreateNet(netIdx);
-      block->addNet(net);
+      assert(net);
       net->addBlock(block);
     }
   }
 
-  while (true) {
-    getline(fp, line);
-    std::istringstream iss(line);
+  std::cout << "Number of blocks: " << design.getNumBlocks() << "\n";
 
-    std::string sBlockIdx;
-    iss >> sBlockIdx;
-    int blockIdx = std::stoi(sBlockIdx);
-
-    if (blockIdx == -1)
-      break;
-
-    std::string sX, sY;
-    iss >> sX;
-    iss >> sY;
-
-    int x = std::stoi(sX);
-    int y = std::stoi(sY);
-    Block *block = design.getBlock(blockIdx);
-    block->setLoc(x, y);
-    block->setFixed(true);
+  // Perform random placement
+  std::cout << "Performing random placement\n";
+  design.randomizePlacement(0);
+  std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
+  if (display) {
+    Drawer::setDesign(design);
+    Drawer::init();
+    Drawer::draw();
+    Drawer::loop();
   }
 
-  design.randomizePlacement();
-
-  Drawer::setDesign(&design);
-  Drawer::init();
-  Drawer::draw();
-  flushinput();
-  std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
-  Drawer::loop();
-
   // Perform analytical placement
-  design.analyticalPlacement();
-  std::cout << "HPWL (after AP): " << design.calcHPWL() << "\n";
-  Drawer::draw();
-  Drawer::loop();
+  design.greedyAnnealing(0);
 
-  design.legalizePlacement();
+  std::cout << "HPWL (after greedy annealing): " << design.calcHPWL() << "\n";
+  if (display) {
+    Drawer::draw();
+    Drawer::loop();
+  }
 
-  // Print results
-  std::cout << "HPWL (after legalization): " << design.calcHPWL() << "\n";
-  std::cout << "Overlap cost: " << design.calcOverlay() << "\n";
-  Drawer::draw();
-  Drawer::loop();
+  design.unplaceAllBlocks();
+  design.randomizePlacement(0);
+
+  design.simulatedAnnealing(0);
+  std::cout << "HPWL (after simulated annealing): " << design.calcHPWL()
+            << "\n";
+
+  if (display) {
+    Drawer::draw();
+    Drawer::loop();
+  }
 }

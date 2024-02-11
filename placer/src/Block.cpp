@@ -1,49 +1,53 @@
 #include <cassert>
+#include <iostream>
 
-#include "APEdge.h"
 #include "Block.h"
+#include "Design.h"
+#include "Net.h"
 
-Block::Block(int idx) : idx(idx), x(0), y(0), fixed(false), imaginary(false) {
+Block::Block(Design &design, int idx)
+    : design(design), idx(idx), x(0), y(0), fixed(false), placed(false) {
   // TODO Auto-generated constructor stub
 }
+
+Block::Block(Design &design, int idx, int x, int y)
+    : design(design), idx(idx), x(x), y(y), fixed(true), placed(true) {}
 
 Block::~Block() {
   // TODO Auto-generated destructor stub
 }
 
 void Block::addNet(Net *net) {
+  if (nets.find(net) != nets.end()) {
+    std::cout << "Block " << idx << " already has net " << net->getIdx()
+              << std::endl;
+    assert(false);
+  }
   assert(nets.find(net) == nets.end());
   nets.insert(net);
 }
 
-void Block::addApEdgeX(APEdge *edge) {
-  assert(apEdgesX.find(edge) == apEdgesX.end());
-  apEdgesX.insert(edge);
+void Block::unplace() {
+  assert(!fixed);
+  assert(placed);
+
+  this->placed = false;
+  // printf("Block %d unplaced from %d, %d\n", idx, x, y);
+  design.getDevice().unplaceBlock(x, y);
 }
 
-void Block::addApEdgeY(APEdge *edge) {
-  assert(apEdgesY.find(edge) == apEdgesY.end());
-  apEdgesY.insert(edge);
+void Block::place(int x, int y) {
+  assert(!fixed);
+  assert(!placed);
+
+  this->x = x;
+  this->y = y;
+  this->placed = true;
+  // printf("Block %d placed at %d, %d\n", idx, x, y);
+  design.getDevice().placeBlock(x, y, *this);
 }
 
-double Block::getApEdgeWeightX(Block *b) {
-  double ret = 0;
-  for (auto e : apEdgesX) {
-    if (e->getOtherBlock(this) == b)
-      ret += e->getWeight();
-  }
-  return ret;
+void Block::place(int xy) {
+  int size = design.getDevice().getSize();
+  place(xy % size, xy / size);
 }
-
-double Block::getApEdgeWeightY(Block *b) {
-  double ret = 0;
-  for (auto e : apEdgesY) {
-    if (e->getOtherBlock(this) == b)
-      ret += e->getWeight();
-  }
-  return ret;
-}
-
-void Block::removeApEdgeX(APEdge *edge) { apEdgesX.erase(edge); }
-
-void Block::removeApEdgeY(APEdge *edge) { apEdgesY.erase(edge); }
