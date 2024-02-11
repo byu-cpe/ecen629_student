@@ -46,8 +46,6 @@ private:
   // Whether block is fixed (perimter I/O)
   bool fixed;
 
-  void unplace();
-
 public:
   // Return block idx value
   int getIdx() { return idx; }
@@ -58,6 +56,7 @@ public:
   // Get/Set the block locations
   void place(int x, int y);
   void place(int xy);
+  void unplace();
 
   // Set block properties
   void setFixed(bool fixed) { this->fixed = fixed; }

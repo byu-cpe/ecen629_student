@@ -32,6 +32,7 @@ void Block::unplace() {
   assert(placed);
 
   this->placed = false;
+  // printf("Block %d unplaced from %d, %d\n", idx, x, y);
   design.getDevice().unplaceBlock(x, y);
 }
 
@@ -41,6 +42,8 @@ void Block::place(int x, int y) {
 
   this->x = x;
   this->y = y;
+  this->placed = true;
+  // printf("Block %d placed at %d, %d\n", idx, x, y);
   design.getDevice().placeBlock(x, y, *this);
 }
 

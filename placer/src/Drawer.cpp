@@ -8,7 +8,7 @@
 #include "Net.h"
 #include "easygl/graphics.h"
 
-static bool show_nets = false;
+static bool show_nets = true;
 Design *Drawer::design = nullptr;
 
 void Drawer::setDesign(Design &new_design) { Drawer::design = &new_design; }
@@ -37,7 +37,7 @@ void Drawer::init() {
              design->getDevice().getSize() * (BLOCK_PAD + BLOCK_SIZE) +
                  2 * OUTSIDE_PAD);
 
-  create_button("Window", "Show Nets", draw_hide_rats_nest);
+  create_button("Window", "Hide Nets", draw_hide_rats_nest);
 
   // This message will show up at the bottom of the window.
   update_message("Interactive graphics example.");
@@ -57,8 +57,22 @@ void Drawer::draw() {
   int size = design->getDevice().getSize();
   for (int y = 0; y < size; y++) {
     for (int x = 0; x < size; x++) {
+      if (!design->getDevice().exists(x, y))
+        continue;
+      if (design->getDevice().isFixedIO(x, y)) {
+        setcolor(LIGHTGREY);
+        fillrect(getXY(x), getXY(y), getXY(x) + BLOCK_SIZE,
+                 getXY(y) + BLOCK_SIZE);
+      }
+      setcolor(BLACK);
       drawrect(getXY(x), getXY(y), getXY(x) + BLOCK_SIZE,
                getXY(y) + BLOCK_SIZE);
+      // Check if block is here
+      Block *b = design->getDevice().getBlock(x, y);
+      if (b) {
+        drawtext(getXY(x) + BLOCK_SIZE / 2, getXY(y) + BLOCK_SIZE / 2,
+                 std::to_string(b->getIdx()).c_str(), BLOCK_SIZE);
+      }
     }
     // Draw blocks
     // for (auto &b : design.getBlocks()) {
@@ -67,51 +81,39 @@ void Drawer::draw() {
     // drawBlock(b);
   }
 
-  //  // // Draw nets
-  // for (auto n : design->getNets()) {
-  //   bool imag = false;
-  //   for (auto b : n->getBlocks())
-  //     if (b->isImaginary())
-  //       imag = true;
-  //   if (!imag && show_nets) {
-  //     drawNet(n);
-  // if (b->isFixed()) {
-  //   fillrect(b->getX() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
-  //            b->getY() + BLOCK_SIZE / 2 + OUTSIDE_PAD);
-  // } else {
-  //   drawrect(b->getX() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
-  //            b->getY() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
-  //            b->getX() + BLOCK_SIZE / 2 + OUTSIDE_PAD,
-  //            b->getY() + BLOCK_SIZE / 2 + OUTSIDE_PAD);
-  //   drawtext(b->getX() + OUTSIDE_PAD, b->getY() + OUTSIDE_PAD,
-  //            std::to_string(b->getIdx()).c_str(), 100);
-  // }
-  //     drawtext(b->getX() + OUTSIDE_PAD, b->getY() + OUTSIDE_PAD,
-  //              std::to_string(b->getIdx()).c_str(), 100);
-  //   }
-  // }
+  // // Draw nets
+  for (auto n : design->getNets()) {
+    for (auto b : n->getBlocks())
+      if (show_nets) {
+        drawNet(*n);
+        //   if (b->isFixed()) {
+        //     fillrect(b->getX() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
+        //              b->getY() + BLOCK_SIZE / 2 + OUTSIDE_PAD);
+        //   } else {
+        //     drawrect(b->getX() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
+        //              b->getY() - BLOCK_SIZE / 2 + OUTSIDE_PAD,
+        //              b->getX() + BLOCK_SIZE / 2 + OUTSIDE_PAD,
+        //              b->getY() + BLOCK_SIZE / 2 + OUTSIDE_PAD);
+        //     drawtext(b->getX() + OUTSIDE_PAD, b->getY() + OUTSIDE_PAD,
+        //              std::to_string(b->getIdx()).c_str(), 100);
+        //   }
+        //   drawtext(b->getX() + OUTSIDE_PAD, b->getY() + OUTSIDE_PAD,
+        //            std::to_string(b->getIdx()).c_str(), 100);
+        // }
+      }
+  }
 }
 
 void Drawer::drawNet(Net &net) {
-  // Pick a source that isn't a pad
-  // Block *source = nullptr;
-  // Block *first = nullptr;
-  // for (auto b : net->getBlocks()) {
-  //   if (!b->isFixed()) {
-  //     source = b;
-  //     break;
-  //   }
-  //   if (first == nullptr)
-  //     first = b;
-  // }
-  // if (!source)
-  //   source = first;
-  // assert(source);
-
-  //   if (source == b)
-  //     continue;
-  //   drawline(b->getX() + OUTSIDE_PAD, b->getY() + OUTSIDE_PAD,
-  //            syu(co->getXD);+ OUTSIDE_PAD, sourc ->g Y() + OUTSIDE// }
+  Block *source = net.getBlocks()[0];
+  for (auto b : net.getBlocks()) {
+    if (b == source)
+      continue;
+    drawline(getXY(b->getX()) + BLOCK_SIZE / 2,
+             getXY(b->getY()) + BLOCK_SIZE / 2,
+             getXY(source->getX()) + BLOCK_SIZE / 2,
+             getXY(source->getY()) + BLOCK_SIZE / 2);
+  }
 }
 
 void nothing(float x, float y) {}

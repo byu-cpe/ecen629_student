@@ -13,9 +13,27 @@
 int main(int argc, char **argv) {
   std::string line;
 
+  assert(argc >= 2);
+
+  bool display = false;
+
+  // Get optional arguments
+  int opt;
+  while ((opt = getopt(argc, argv, "d")) != -1) {
+    switch (opt) {
+    case 'd':
+      display = true;
+      break;
+    }
+  }
+
+  // Get positional arguments - there should be one: <circuit path>
+  assert(argc - optind == 1);
+
+  // Read circuit file
+  std::string filePath(argv[optind++]);
+
   // Open the circuit file
-  assert(argc == 2);
-  std::string filePath(argv[1]);
   std::ifstream fp(filePath);
   assert(fp.good());
 
@@ -34,14 +52,11 @@ int main(int argc, char **argv) {
     int x, y;
     iss >> blockIdx >> x >> y;
 
-    printf("New block %d at %d %d\n", blockIdx, x, y);
-
     Block *block = design.addBlock(blockIdx, x, y);
   }
 
   while (true) {
     getline(fp, line);
-    std::cout << "Line:" << line << "\n";
     if (line.size() == 0)
       break;
 
@@ -51,34 +66,48 @@ int main(int argc, char **argv) {
     iss >> blockIdx;
     Block *block = design.getBlock(blockIdx);
     if (!block) {
-      std::cout << "Block " << blockIdx << " not found\n";
       block = design.addBlock(blockIdx);
     }
 
     int netIdx;
     while (iss >> netIdx) {
-      std::cout << "Net " << netIdx << "\n";
       Net *net = design.getOrCreateNet(netIdx);
       assert(net);
       net->addBlock(block);
     }
   }
 
-  Drawer::setDesign(design);
-  Drawer::init();
   std::cout << "Number of blocks: " << design.getNumBlocks() << "\n";
-  Drawer::draw();
-  flushinput();
+
+  // Perform random placement
+  std::cout << "Performing random placement\n";
+  design.randomizePlacement(0);
   std::cout << "HPWL (random placement): " << design.calcHPWL() << "\n";
-  Drawer::loop();
+  if (display) {
+    Drawer::setDesign(design);
+    Drawer::init();
+    Drawer::draw();
+    Drawer::loop();
+  }
 
   // Perform analytical placement
-  // design.analyticalPlacement();
-  std::cout << "HPWL (after placement): " << design.calcHPWL() << "\n";
-  Drawer::draw();
-  Drawer::loop();
-  // Perform analytical placement
-  // Perform analytical placement
-  Drawer::draw();
-  Drawer::loop();
+  design.greedyAnnealing(0);
+
+  std::cout << "HPWL (after greedy annealing): " << design.calcHPWL() << "\n";
+  if (display) {
+    Drawer::draw();
+    Drawer::loop();
+  }
+
+  design.unplaceAllBlocks();
+  design.randomizePlacement(0);
+
+  design.simulatedAnnealing(0);
+  std::cout << "HPWL (after simulated annealing): " << design.calcHPWL()
+            << "\n";
+
+  if (display) {
+    Drawer::draw();
+    Drawer::loop();
+  }
 }

@@ -28,12 +28,15 @@ Design::~Design() {}
 
 Block *Design::addBlock(int idx) {
   Block *block = new Block(*this, idx);
+  blocks.push_back(block);
   blockMap[idx] = block;
   return block;
 }
 
 Block *Design::addBlock(int idx, int x, int y) {
   Block *block = new Block(*this, idx, x, y);
+  blocks.push_back(block);
+  fpga.placeBlock(x, y, *block);
   blockMap[idx] = block;
   return block;
 }
@@ -44,12 +47,13 @@ Net *Design::getOrCreateNet(int idx) {
   }
 
   Net *net = new Net(*this, idx);
+  nets.push_back(net);
   netMap[idx] = net;
   return net;
 }
 
-double Design::calcHPWL() {
-  double total = 0;
+int Design::calcHPWL() {
+  int total = 0;
   for (auto n : nets) {
     total += n->calcHPWL();
   }
@@ -61,4 +65,12 @@ Block *Design::getBlock(int idx) {
     return nullptr;
   }
   return blockMap[idx];
+}
+
+void Design::unplaceAllBlocks() {
+  for (auto b : blocks) {
+    if (b->isFixed())
+      continue;
+    b->unplace();
+  }
 }

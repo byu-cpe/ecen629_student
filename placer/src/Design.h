@@ -50,11 +50,21 @@ public:
   void setBlockLoc(Block *block, int x, int y);
   void setBlockLoc(Block *block, int xy);
 
-  // Provide random placement of blocks
-  void randomizePlacement();
-
   // Calculate the current half-perimiter wire length cost
-  double calcHPWL();
+  int calcHPWL();
+
+  void unplaceAllBlocks();
+
+  //////////////// You need to implement these functions ////////////////
+
+  // Provide random placement of blocks
+  void randomizePlacement(int seed);
+  void simulatedAnnealing(int seed);
+
+  // Perform greedy annealing
+  void greedyAnnealing(int seed);
+
+  void swapLocs(int xy1, int xy2);
 };
 
 #endif
